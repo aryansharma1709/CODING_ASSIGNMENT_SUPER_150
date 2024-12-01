@@ -1,145 +1,136 @@
 import java.util.*;
 import java.io.*;
 public class Main {
-    public static void main(String args[]) throws Exception{
-        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-        String[] arr=br.readLine().split(" ");
-        BinaryTree bt=new BinaryTree(arr);
+    public static void main(String args[]) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String[] a = br.readLine().split(" ");
+        BT bt = new BT(a);
         
-        bt.topview();
-        
+        bt.topView();
     }
+
+
+	
 }
 
-class BinaryTree
-{
-    private class Node
-    {
-        int data;
-        Node left,right;
-        Node(int data)
-        {
-            this.data=data;
+class BT {
+    private class Node {
+        int v;
+        Node l, r;
+        Node(int v) {
+            this.v = v;
         }
     }
 
     Node root;
 
-    BinaryTree(String[] arr)
-    {
-        Queue<Node> queue=new LinkedList<Node>();
-        construct(arr,0,queue);
+    BT(String[] a) {
+        Queue<Node> q = new LinkedList<>();
+        build(a, 0, q);
     }
 
-    public void topview()
-    {
-        verticalTraversalTop(this.root);
+    public void topView() {
+        verticalTop(this.root);
     }
-	class Pair {
-		Node node;
-		int idx;
-		public Pair(Node n, int i) {
-			node = n;
-			idx = i;
+
+	class P {
+		Node n;
+		int i;
+		public P(Node n, int i) {
+			this.n = n;
+			this.i = i;
 		}
 	}
 
-   private void verticalTraversalTop(Node root) {
-	   TreeMap<Integer, Integer> map = new TreeMap<>();
-	   Queue<Pair> q = new ArrayDeque<>();
-	   q.add(new Pair(root, 0));
+    private void verticalTop(Node root) {
+        TreeMap<Integer, Integer> m = new TreeMap<>();
+        Queue<P> q = new ArrayDeque<>();
+        q.add(new P(root, 0));
 
-	   while (!q.isEmpty()) {
-		   Pair rv = q.poll();
-		   Node nn = rv.node;
-		   int idx = rv.idx;
+        while (!q.isEmpty()) {
+            P p = q.poll();
+            Node nn = p.n;
+            int idx = p.i;
 
-		   if (!map.containsKey(idx))
-			  map.put(idx, nn.data);
+            if (!m.containsKey(idx)) 
+                m.put(idx, nn.v);
 
-			if (nn.left != null) 
-				q.add(new Pair(nn.left, idx-1));
-			if (nn.right != null)
-				q.add(new Pair(nn.right, idx+1));
-	   }
-
-	   for (int key : map.keySet()) {
-		   if (map.get(key) != -1)
-		   	   System.out.print(map.get(key) + " ");
-	   }
-   }
-
-
-    private void construct(String[] arr,int ind,Queue<Node> queue)
-    {
-        if(ind>=arr.length)
-        return;
-        if(queue.size()==0)
-        {
-            Node nn=new Node(Integer.parseInt(arr[ind]));
-            this.root=nn;
-            queue.add(nn);
+            if (nn.l != null) 
+                q.add(new P(nn.l, idx - 1));
+            if (nn.r != null) 
+                q.add(new P(nn.r, idx + 1));
         }
-        else
-        {
-            Node parent=queue.peek();
-                if(parent.data!=-1){
-                if(parent.left==null)
-                {
-                    parent.left=new Node(Integer.parseInt(arr[ind]));
-                    queue.add(parent.left);
-                }
-                else
-                {
-                    if(parent.right==null)
-                    {
-                    parent.right=new Node(Integer.parseInt(arr[ind]));
-                    queue.add(parent.right);
-                    queue.poll();
+
+        for (int k : m.keySet()) 
+		{
+            if (m.get(k) != -1)
+                System.out.print(m.get(k) + " ");
+        }
+    }
+
+    private void build(String[] a, int idx, Queue<Node> q) {
+        if (idx >= a.length)
+            return;
+        if (q.size() == 0) {
+            Node nn = new Node(Integer.parseInt(a[idx]));
+            this.root = nn;
+            q.add(nn);
+        }
+		 else 
+		 {
+            Node p = q.peek();
+            if (p.v != -1)
+			 {
+                if (p.l == null)
+				 {
+                    p.l = new Node(Integer.parseInt(a[idx]));
+                    q.add(p.l);
+                } 
+				else 
+				{
+                    if (p.r == null)
+					 {
+                        p.r = new Node(Integer.parseInt(a[idx]));
+                        q.add(p.r);
+                        q.poll();
                     }
-               }
-               }
-               else
-               {
-                   queue.poll();
-                   ind--;
-               }
+                }
+            } 
+			else {
+                q.poll();
+                idx--;
+            }
         }
-        construct(arr,ind+1,queue);
+        build(a, idx + 1, q);
     }
 
-    public void display()
-    {
-        display_tree(this.root);
+    public void show() {
+        displayTree(this.root);
     }
 
-    private void display_tree(Node root)
-    {
-        if(root==null)
-        return;
-        String str=root.data+"";
-        if(root.left!=null)
-        {
-            str=root.left.data+" <= "+str;
+    private void displayTree(Node root)
+	 {
+        if (root == null)
+            return;
+        String s = root.v + "";
+        if (root.l != null) 
+		{
+            s = root.l.v + " <= " + s;
         }
-        else
-        {
-            str="END <= "+str;
+		 else 
+		{
+            s = "END <= " + s;
         }
 
-        if(root.right!=null)
-        {
-            str=str+" => "+root.right.data;
+        if (root.r != null) 
+		{
+            s = s + " => " + root.r.v;
         }
-        else
-        {
-            str=str+" => END";
+		 else {
+            s = s + " => END";
         }
-        System.out.println(str);
-        display_tree(root.left);
-        display_tree(root.right);
-
+        System.out.println(s);
+        displayTree(root.l);
+        displayTree(root.r);
     }
-
-
 }
